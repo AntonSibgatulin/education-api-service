@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Random;
 
 @NoArgsConstructor
 @Data
@@ -36,8 +37,8 @@ public class Item {
     private List<Tag> tags;
     private Long timeCreate;
     private Long view;
-    private Integer rating; // -/5
-    private Integer count_voice;
+    private Double rating; // -/5
+    private Long count_voice;
     @Enumerated(EnumType.STRING)
     private TypeItem type;
 
@@ -58,7 +59,15 @@ public class Item {
         timeStart = timeCreate;
         timeEnd = timeCreate + 1000*60*60*24*31;
         view = 0L;
-        rating = 0;
-        count_voice = 0;
+        rating = 0.0;
+        count_voice = 0L;
+    }
+
+    public void createTest() {
+        create();
+        view = new Random().nextLong(10000000);
+        rating = 1.0+new Random().nextDouble(5,1);
+        count_voice = new Random().nextLong(view);
+
     }
 }

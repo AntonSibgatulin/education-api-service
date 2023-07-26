@@ -9,17 +9,21 @@ import jp.antonsibgatulin.educationapiservice.enums.TypeItem;
 import jp.antonsibgatulin.educationapiservice.repository.ItemRepository;
 import jp.antonsibgatulin.educationapiservice.repository.TeacherRepository;
 import jp.antonsibgatulin.educationapiservice.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+@RequestMapping("/api/v1/")
 @SpringBootApplication
 public class EducationApiServiceApplication {
 
+    private static final boolean test_db_generate = true;
     public static void main(String[] args) {
         SpringApplication.run(EducationApiServiceApplication.class, args);
     }
@@ -30,6 +34,7 @@ public class EducationApiServiceApplication {
                                           ItemRepository itemRepository) {
         return args -> {
 
+            if(!test_db_generate)return;
 
             System.out.println("==================================//////////START GENERATE DATE///////==================================");
             var faker = new Faker();
@@ -58,7 +63,7 @@ public class EducationApiServiceApplication {
                         parag += faker.lorem().paragraph(5) + "\n\n";
                     }
                     var item = new Item(name, parag, teacher, 50 + new Random().nextInt(500), 300, 100, null, TypeItem.NEW);
-
+                    item.createTest();
                     itemRepository.save(item);
 
 

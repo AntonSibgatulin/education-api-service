@@ -21,6 +21,7 @@ public class PostItem {
     private Integer like;
     private Integer dislike;
 
+    private int hours;
     @JoinColumn
     @ManyToOne
     private Item item;
