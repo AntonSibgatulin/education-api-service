@@ -52,8 +52,23 @@ public class Item {
         this.seats_left = seats_left;
         this.tags = tags;
         this.type = type;
+        init();
     }
 
+
+    public Item(String name, String description, Teacher teacher, Integer price, Integer number_of_students, List<Tag> tags) {
+        this.name = name;
+        this.description = description;
+        this.teacher = teacher;
+        this.price = price;
+        this.number_of_students = number_of_students;
+        this.tags = tags;
+        init();
+    }
+
+    public void init(){
+        create();
+    }
     public void create(){
         timeCreate = System.currentTimeMillis();
         timeStart = timeCreate;
@@ -61,6 +76,7 @@ public class Item {
         view = 0L;
         rating = 0.0;
         count_voice = 0L;
+        type = TypeItem.DEF;
     }
 
     public void createTest() {

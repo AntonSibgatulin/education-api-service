@@ -41,8 +41,12 @@ public class ItemController {
 
 
     @PutMapping("/putItem")
-    public ResponseEntity putItem(@RequestBody ItemDTO itemDTO){
-        return itemService.putItem(itemDTO);
+    public ResponseEntity putItem(@RequestBody ItemDTO itemDTO,Authentication authentication){
+        return itemService.putItem(itemDTO,authentication);
     }
 
+    @DeleteMapping("/deleteItem/{id}")
+    public ResponseEntity deleteItem(@PathVariable("id") Long id,Authentication authentication){
+        return itemService.deleteItem(id,authentication);
+    }
 }

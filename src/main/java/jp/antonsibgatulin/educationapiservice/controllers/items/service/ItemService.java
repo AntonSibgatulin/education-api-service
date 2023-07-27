@@ -6,9 +6,14 @@ import jp.antonsibgatulin.educationapiservice.controllers.items.response.Respons
 import jp.antonsibgatulin.educationapiservice.dto.ItemDTO;
 import jp.antonsibgatulin.educationapiservice.entity.item.Item;
 import jp.antonsibgatulin.educationapiservice.entity.post_item.PostItem;
+import jp.antonsibgatulin.educationapiservice.entity.teacher.Teacher;
+import jp.antonsibgatulin.educationapiservice.entity.user.Role;
 import jp.antonsibgatulin.educationapiservice.entity.user.User;
+import jp.antonsibgatulin.educationapiservice.mapper.item.ItemMapper;
 import jp.antonsibgatulin.educationapiservice.repository.ItemRepository;
 import jp.antonsibgatulin.educationapiservice.repository.PostItemRepository;
+import jp.antonsibgatulin.educationapiservice.repository.TeacherRepository;
+import jp.antonsibgatulin.educationapiservice.response.ResponseAccessDenied;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -19,7 +24,9 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.util.List;
 
-import static jp.antonsibgatulin.educationapiservice.utils.UserUtils.getUser;
+import static jp.antonsibgatulin.educationapiservice.utils.ResponseUtils.getAccessDenied;
+import static jp.antonsibgatulin.educationapiservice.utils.ResponseUtils.getOK;
+import static jp.antonsibgatulin.educationapiservice.utils.UserUtils.*;
 
 @RequiredArgsConstructor
 @Service
@@ -29,6 +36,9 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final PostItemRepository postItemRepository;
+    private final TeacherRepository teacherRepository;
+    private final ItemMapper itemMapper;
+
 
     public List<Item> getPopular(Integer page) {
         int p = 0;
@@ -79,9 +89,34 @@ public class ItemService {
         */
     }
 
-    public ResponseEntity putItem(ItemDTO itemDTO) {
+    public ResponseEntity putItem(ItemDTO itemDTO, Authentication authentication) {
+
+        var teacher = getTeacher(authentication,teacherRepository);
+        if(teacher == null)return getAccessDenied();
+        var item = itemMapper.fromDTO(itemDTO, teacher);
+
+        itemRepository.save(item);
 
 
-        return null;
+        return ResponseEntity.ok(item);
     }
+
+    public ResponseEntity deleteItem(Long id, Authentication authentication) {
+        var teacher = getTeacher(authentication,teacherRepository);
+        var item = itemRepository.getReferenceById(id);
+        if(item == null)return getAccessDenied();
+        if(checkAdmin(teacher) || checkAuthor(teacher,item)){
+            item.getTags().clear();
+            //this part need a test
+            itemRepository.delete(item);
+            return getOK();
+        }
+        else{
+            return getAccessDenied();
+        }
+
+    }
+
+
+
 }
