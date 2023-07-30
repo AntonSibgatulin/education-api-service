@@ -1,6 +1,7 @@
 package jp.antonsibgatulin.educationapiservice.controllers.items;
 
 
+import jp.antonsibgatulin.educationapiservice.controllers.items.response.ResponsePopularsAndWatches;
 import jp.antonsibgatulin.educationapiservice.controllers.items.service.ItemService;
 import jp.antonsibgatulin.educationapiservice.dto.ItemDTO;
 import jp.antonsibgatulin.educationapiservice.entity.item.Item;
@@ -22,14 +23,14 @@ public class ItemController {
 
     //The `getPopulars` method is mapped to the "/items/getPopulars" endpoint and retrieves a list of popular items based on the specified page number.
     @GetMapping("/getPopulars")
-    public List<Item> getPopulars(@RequestParam("page") Integer page) {
-        return itemService.getPopular(page);
+    public ResponsePopularsAndWatches getPopulars(@RequestParam("page") Integer page) {
+        return new ResponsePopularsAndWatches(itemService.getPopular(page));
     }
 
     //The `getWatches` method is mapped to the "/items/getWatches" endpoint and retrieves a list of watched items based on the specified page number.
     @GetMapping("/getWatches")
-    public List<Item> getWatches(@RequestParam("page") Integer page) {
-        return itemService.getWatches(page);
+    public ResponsePopularsAndWatches getWatches(@RequestParam("page") Integer page) {
+        return new ResponsePopularsAndWatches(itemService.getWatches(page));
     }
 
 
@@ -49,4 +50,12 @@ public class ItemController {
     public ResponseEntity deleteItem(@PathVariable("id") Long id,Authentication authentication){
         return itemService.deleteItem(id,authentication);
     }
+
+
+    @PostMapping("/editItem/{id}")
+    public ResponseEntity editItem(@RequestBody ItemDTO itemDTO,Authentication authentication,@PathVariable("id") Long id){
+        return itemService.editItem(itemDTO,authentication,id);
+    }
+
+
 }

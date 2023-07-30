@@ -1,7 +1,7 @@
 package jp.antonsibgatulin.educationapiservice.utils;
 
-import jp.antonsibgatulin.educationapiservice.response.ResponseAccessDenied;
-import jp.antonsibgatulin.educationapiservice.response.ResponseOK;
+import jp.antonsibgatulin.educationapiservice.response.standarlone.ResponseAccessDenied;
+import jp.antonsibgatulin.educationapiservice.response.standarlone.ResponseOK;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseUtils {

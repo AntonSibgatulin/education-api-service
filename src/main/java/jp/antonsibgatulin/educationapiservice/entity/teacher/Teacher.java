@@ -1,5 +1,6 @@
 package jp.antonsibgatulin.educationapiservice.entity.teacher;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jp.antonsibgatulin.educationapiservice.entity.user.User;
 import lombok.Data;
@@ -18,13 +19,14 @@ public class Teacher {
     private Long id;
     private String last_name;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @ManyToOne
     @JoinColumn(name = "user_id",unique = true,nullable = false)
     private User user;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable
-    private List<Expirience> expirienceList;
+    private List<Experience> experienceList;
 
 
     public Teacher(String last_name, User user) {

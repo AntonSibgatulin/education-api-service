@@ -5,15 +5,12 @@ import jp.antonsibgatulin.educationapiservice.controllers.items.response.Respons
 import jp.antonsibgatulin.educationapiservice.controllers.items.response.ResponseItemForUnAuthUser;
 import jp.antonsibgatulin.educationapiservice.dto.ItemDTO;
 import jp.antonsibgatulin.educationapiservice.entity.item.Item;
-import jp.antonsibgatulin.educationapiservice.entity.post_item.PostItem;
 import jp.antonsibgatulin.educationapiservice.entity.teacher.Teacher;
-import jp.antonsibgatulin.educationapiservice.entity.user.Role;
 import jp.antonsibgatulin.educationapiservice.entity.user.User;
 import jp.antonsibgatulin.educationapiservice.mapper.item.ItemMapper;
 import jp.antonsibgatulin.educationapiservice.repository.ItemRepository;
 import jp.antonsibgatulin.educationapiservice.repository.PostItemRepository;
 import jp.antonsibgatulin.educationapiservice.repository.TeacherRepository;
-import jp.antonsibgatulin.educationapiservice.response.ResponseAccessDenied;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.List;
 
 import static jp.antonsibgatulin.educationapiservice.utils.ResponseUtils.getAccessDenied;
@@ -67,7 +63,7 @@ public class ItemService {
     }
 
     public ResponseEntity getItem(Long id, Authentication authentication) {
-        var item = itemRepository.getReferenceById(id);
+        var item = itemRepository.getItemById(id);
         User user = getUser(authentication);
         var posts = postItemRepository.findAllByItem(item);
         int hours = 0;
@@ -103,9 +99,9 @@ public class ItemService {
 
     public ResponseEntity deleteItem(Long id, Authentication authentication) {
         var teacher = getTeacher(authentication,teacherRepository);
-        var item = itemRepository.getReferenceById(id);
+        var item = itemRepository.getItemById(id);
         if(item == null)return getAccessDenied();
-        if(checkAdmin(teacher) || checkAuthor(teacher,item)){
+        if(isTeacherOrAdmin(teacher, item)){
             item.getTags().clear();
             //this part need a test
             itemRepository.delete(item);
@@ -118,5 +114,33 @@ public class ItemService {
     }
 
 
+    public ResponseEntity editItem(ItemDTO itemDTO, Authentication authentication, Long id) {
+        var teacher = getTeacher(authentication,teacherRepository);
+        var item = itemRepository.getItemById(id);
 
+        if(isTeacherOrAdmin(teacher, item)){
+            var item_ = itemMapper.fromDTO(itemDTO, teacher);
+
+
+            item.setName(item_.getName());
+            item.setDescription(item_.getDescription());
+            item.setPrice(item_.getPrice());
+            item.setNumber_of_students(item_.getNumber_of_students());
+            item.setTags(item_.getTags());
+
+            itemRepository.save(item);
+
+
+            return getOK();
+        }
+        else{
+            return getAccessDenied();
+        }
+    }
+
+
+
+    private boolean isTeacherOrAdmin(Teacher teacher, Item item) {
+        return checkAdmin(teacher) || checkAuthor(teacher, item);
+    }
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "expirience")
-public class Expirience {
+public class Experience {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,7 +17,7 @@ public class Expirience {
     private String description;
     private Integer number_of_year;
 
-    public Expirience(String description, Integer number_of_year) {
+    public Experience(String description, Integer number_of_year) {
         this.description = description;
         this.number_of_year = number_of_year;
     }

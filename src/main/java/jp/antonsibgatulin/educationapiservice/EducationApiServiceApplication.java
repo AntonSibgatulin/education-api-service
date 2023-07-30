@@ -2,61 +2,61 @@ package jp.antonsibgatulin.educationapiservice;
 
 import com.github.javafaker.Faker;
 import jp.antonsibgatulin.educationapiservice.entity.item.Item;
-import jp.antonsibgatulin.educationapiservice.entity.teacher.Expirience;
+
+import jp.antonsibgatulin.educationapiservice.entity.teacher.Experience;
 import jp.antonsibgatulin.educationapiservice.entity.teacher.Teacher;
 import jp.antonsibgatulin.educationapiservice.entity.user.User;
 import jp.antonsibgatulin.educationapiservice.enums.TypeItem;
 import jp.antonsibgatulin.educationapiservice.repository.ItemRepository;
 import jp.antonsibgatulin.educationapiservice.repository.TeacherRepository;
 import jp.antonsibgatulin.educationapiservice.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-@RequestMapping("/api/v1/")
+
 @SpringBootApplication
 public class EducationApiServiceApplication {
 
     private static final boolean test_db_generate = true;
+
     public static void main(String[] args) {
         SpringApplication.run(EducationApiServiceApplication.class, args);
     }
 
 
-    @Bean
+    //@Bean
     public CommandLineRunner generateData(UserRepository userRepository, TeacherRepository teacherRepository,
                                           ItemRepository itemRepository) {
         return args -> {
 
-            if(!test_db_generate)return;
+            if (!test_db_generate) return;
 
             System.out.println("==================================//////////START GENERATE DATE///////==================================");
             var faker = new Faker();
 
             for (int i = 0; i < 500; i++) {
-                var user = new User(faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.internet().password(6, 16));
+                var user = new User(faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.internet().password(6, 16), faker.lorem().sentence(10));
                 user.create();
                 userRepository.save(user);
 
                 var teacher = new Teacher(faker.name().nameWithMiddle(), user);
                 //teacherRepository.save(teacher);
 
-                var list = new ArrayList<Expirience>();
+                var list = new ArrayList<Experience>();
 
                 for (var j = 0; j < 1 + new Random().nextInt(4); j++) {
-                    var exp = new Expirience(faker.educator().course(), 1 + new Random().nextInt(10));
+                    var exp = new Experience(faker.educator().course(), 1 + new Random().nextInt(10));
                     list.add(exp);
                 }
-                teacher.setExpirienceList(list);
+                teacher.setExperienceList(list);
                 teacherRepository.save(teacher);
 
-                for (int x = 0; x < 1 + new Random().nextInt(); x++) {
+                for (int x = 0; x < 1 + new Random().nextInt(100); x++) {
                     var name = (faker.lorem().sentence());
                     var parag = "";
                     for (var j = 0; j < 5; j++) {
@@ -82,4 +82,6 @@ public class EducationApiServiceApplication {
 
         };
     }
+
+
 }

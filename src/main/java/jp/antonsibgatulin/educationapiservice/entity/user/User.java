@@ -1,5 +1,6 @@
 package jp.antonsibgatulin.educationapiservice.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,17 +38,23 @@ public class User implements UserDetails {
     private Long profileImageId;
 
 
+    @Column(nullable = true)
+    private String description;
+
+
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
 
-    public User(String name, String surname, String email, String password) {
+    public User(String name, String surname, String email, String password,String description) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
+        this.description = description;
     }
 
 
@@ -58,34 +66,41 @@ public class User implements UserDetails {
     //likes
 
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    @JsonIgnore
     @Override
     public String getUsername() {
         return email;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return false;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return false;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return false;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;
     }
+
 
 }
